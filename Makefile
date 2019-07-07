@@ -17,7 +17,7 @@ proto-lint:
 
 .PHONY: proto
 proto:
-	protoc --go_out=./ ./proto/grip.proto
+	protoc --go_out=plugins=grpc:. ./proto/grip.proto
 
 build:
 	GOBIN=$(PWD)/bin \

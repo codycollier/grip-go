@@ -1,7 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	srv "github.com/codycollier/grip-go/pkg/server"
+)
 
 func main() {
-	fmt.Println("[gripd] Hello world!")
+
+	fmt.Println("[gripd] Starting server...")
+	srv.StartGripServer()
+	fmt.Println("[gripd] Exited.")
+
 }
