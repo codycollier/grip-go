@@ -1,1 +1,37 @@
 syntax = "proto3";
+
+service Grip {
+
+    // A simple echo request and response
+    rpc Echo(EchoRequest) returns (EchoResponse);
+
+    // A streaming echo interface
+    rpc EchoStream(stream EchoRequest) returns (stream EchoResponse);
+
+    // An rpc representing a CPU heavy call
+    rpc Compute(ComputeRequest) returns (ComputeResponse);
+
+}
+
+message EchoRequest {
+    // Arbitrary message
+    string msg = 1;
+
+    // Number of seconds the server should sleep before echo back
+    int32 sleep_seconds = 2;
+}
+
+message EchoResponse {
+    // Echo of arbitrary message
+    string msg = 1;
+}
+
+message ComputeRequest {
+    // Number of seconds to run compute intensive task
+    int32 compute_seconds = 1;
+}
+
+message ComputeResponse {
+    // Compute response
+    string msg = 1;
+}
