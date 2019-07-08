@@ -7,8 +7,8 @@ import (
 
 func main() {
 
-	log.Println("[gripd] Starting server...")
-	srv.StartGripServer()
+	var addr = "127.0.0.1:8080"
+	srv.StartGripServer(addr)
 	log.Println("[gripd] Exited.")
 
 }

@@ -25,10 +25,9 @@ func (s *gripServer) Compute(ctx context.Context, req *pb.ComputeRequest) (*pb.C
 	return resp, nil
 }
 
-func StartGripServer() {
+func StartGripServer(addr string) {
 
 	// Setup the gRPC server and start
-	var addr = ":8080"
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatalf("[gripd] Error listening on %s", addr)
