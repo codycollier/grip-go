@@ -2,41 +2,40 @@ package server
 
 import (
 	"context"
-	"fmt"
 	pb "github.com/codycollier/grip-go/proto"
-	// "github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"
+	"log"
 	"net"
 )
 
 type gripServer struct {
 }
 
-func newGripServer() *gripServer {
-	return &gripServer{}
-}
-
-func (s *gripServer) Echo(ctx context.Context, echo *pb.EchoRequest) (*pb.EchoResponse, error) {
-	resp := &pb.EchoResponse{Msg: "pong"}
+func (s *gripServer) Echo(ctx context.Context, req *pb.EchoRequest) (*pb.EchoResponse, error) {
+	log.Printf("[gripd] received: %v", req)
+	resp := &pb.EchoResponse{Msg: req.Msg}
+	log.Printf("[gripd] sending: %v", resp)
 	return resp, nil
 }
 
-func (s *gripServer) Compute(ctx context.Context, creq *pb.ComputeRequest) (*pb.ComputeResponse, error) {
+func (s *gripServer) Compute(ctx context.Context, req *pb.ComputeRequest) (*pb.ComputeResponse, error) {
+	log.Printf("[gripd] received: %v", req)
 	resp := &pb.ComputeResponse{Msg: "123abc"}
+	log.Printf("[gripd] sending: %v", resp)
 	return resp, nil
 }
 
 func StartGripServer() {
 
-	fmt.Println("[gripd] Hello world!")
-
 	// Setup the gRPC server and start
-	listener, err := net.Listen("tcp", ":8080")
+	var addr = ":8080"
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		fmt.Println("[gripd] Error listening on 8080")
+		log.Fatalf("[gripd] Error listening on %s", addr)
 	}
 	grpcServer := grpc.NewServer()
-	pb.RegisterGripServer(grpcServer, newGripServer())
+	pb.RegisterGripServer(grpcServer, &gripServer{})
+	log.Printf("[gripd] Listening on %v", addr)
 	grpcServer.Serve(listener)
 
 }

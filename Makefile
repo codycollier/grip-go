@@ -26,4 +26,6 @@ build:
 test:
 	go test ./...
 
+clean:
+	rm -rf ./bin/ ./cmd/gripd/gripd ./cmd/grip-client/grip-client
 
