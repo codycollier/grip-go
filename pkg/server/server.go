@@ -35,6 +35,8 @@ func StartGripServer() {
 	}
 	grpcServer := grpc.NewServer()
 	pb.RegisterGripServer(grpcServer, &gripServer{})
+
+	// Listen forever
 	log.Printf("[gripd] Listening on %v", addr)
 	grpcServer.Serve(listener)
 
