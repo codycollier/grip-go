@@ -16,6 +16,6 @@ func main() {
 
 	// ...
 	client.CallEcho(gripcl, "foo", 0)
-	client.CallCompute(gripcl, 123)
+	client.CallCompute(gripcl, 3)
 
 }
