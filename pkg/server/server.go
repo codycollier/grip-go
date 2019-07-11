@@ -41,10 +41,12 @@ func (s *gripServer) EchoStream(stream pb.Grip_EchoStreamServer) error {
 		}
 
 		// Echo the string back
+		log.Println("[gripd] recv: ", req.Msg)
 		resp := &pb.EchoResponse{Msg: req.Msg}
 		if err := stream.Send(resp); err != nil {
 			return err
 		}
+		log.Println("[gripd] send: ", resp.Msg)
 
 	}
 

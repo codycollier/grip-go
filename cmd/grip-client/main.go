@@ -14,8 +14,9 @@ func main() {
 	gripcl, conn := client.GetNewGripClient(addr)
 	defer conn.Close()
 
-	// ...
+	// Simple test calls for now
 	client.CallEcho(gripcl, "foo", 0)
 	client.CallCompute(gripcl, 3)
+	client.CallEchoStream(gripcl, 5)
 
 }

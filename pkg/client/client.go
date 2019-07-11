@@ -4,7 +4,9 @@ import (
 	"context"
 	pb "github.com/codycollier/grip-go/proto"
 	"google.golang.org/grpc"
+	"io"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -39,6 +41,42 @@ func CallEcho(gripcl pb.GripClient, msg string, sleepSeconds int32) {
 		log.Println("[grip-client] Error calling Echo")
 	}
 	log.Printf("[grip-client] received: %v", response)
+
+}
+
+func CallEchoStream(gripcl pb.GripClient, count int) {
+
+	// Simple echo stream
+	stream, err := gripcl.EchoStream(context.Background())
+	if err != nil {
+		log.Println("Error establishing stream")
+		return
+	}
+
+	// Wait
+	waitc := make(chan struct{})
+
+	// Listener
+	go func() {
+		for {
+			resp, err := stream.Recv()
+			if err == io.EOF {
+				close(waitc)
+				return
+			}
+			if err != nil {
+				log.Fatalf("[grip-client] error receiving: %v", err)
+			}
+			log.Println("[grip-client] recv: ", resp.Msg)
+		}
+	}()
+
+	for i := 0; i < count; i++ {
+		req := &pb.EchoRequest{Msg: strconv.Itoa(i), SleepSeconds: 0}
+		stream.Send(req)
+		log.Println("[grip-client] send: ", req.Msg)
+	}
+	<-waitc
 
 }
 
