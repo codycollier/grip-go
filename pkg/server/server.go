@@ -5,6 +5,7 @@ import (
 	"github.com/codycollier/grip-go/pkg/mockload"
 	pb "github.com/codycollier/grip-go/proto"
 	"google.golang.org/grpc"
+	"io"
 	"log"
 	"net"
 )
@@ -20,6 +21,35 @@ func (s *gripServer) Echo(ctx context.Context, req *pb.EchoRequest) (*pb.EchoRes
 
 	log.Printf("[gripd] sending: %v", resp)
 	return resp, nil
+}
+
+// Main function for Grip.EchoStream() endpoint
+func (s *gripServer) EchoStream(stream pb.Grip_EchoStreamServer) error {
+
+	// Iterate over stream of EchoRequest messages
+	for {
+		req, err := stream.Recv()
+
+		// End of stream
+		if err == io.EOF {
+			return nil
+		}
+
+		// Error
+		if err != nil {
+			return err
+		}
+
+		// Echo the string back
+		resp := &pb.EchoResponse{Msg: req.Msg}
+		if err := stream.Send(resp); err != nil {
+			return err
+		}
+
+	}
+
+	// End of response stream
+	return nil
 }
 
 // Main function for Grip.Compute() endpoint

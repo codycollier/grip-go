@@ -6,7 +6,7 @@ service Grip {
     rpc Echo(EchoRequest) returns (EchoResponse);
 
     // A streaming echo interface
-    // rpc EchoStream(stream EchoRequest) returns (stream EchoResponse);
+    rpc EchoStream(stream EchoRequest) returns (stream EchoResponse);
 
     // An rpc representing a CPU heavy call
     rpc Compute(ComputeRequest) returns (ComputeResponse);
