@@ -24,7 +24,7 @@ build:
 		  go install ./...
 
 test:
-	go test ./...
+	go test ./pkg/mockload
 
 clean:
 	rm -rf ./bin/ ./cmd/gripd/gripd ./cmd/grip-client/grip-client
