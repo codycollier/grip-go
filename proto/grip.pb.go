@@ -203,7 +203,7 @@ func init() {
 func init() { proto.RegisterFile("proto/grip.proto", fileDescriptor_8a362f42ae760037) }
 
 var fileDescriptor_8a362f42ae760037 = []byte{
-	// 196 bytes of a gzipped FileDescriptorProto
+	// 216 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x28, 0x28, 0xca, 0x2f,
 	0xc9, 0xd7, 0x4f, 0x2f, 0xca, 0x2c, 0xd0, 0x03, 0x33, 0x95, 0x5c, 0xb8, 0xb8, 0x5d, 0x93, 0x33,
 	0xf2, 0x83, 0x52, 0x0b, 0x4b, 0x53, 0x8b, 0x4b, 0x84, 0x04, 0xb8, 0x98, 0x73, 0x8b, 0xd3, 0x25,
@@ -212,11 +212,12 @@ var fileDescriptor_8a362f42ae760037 = []byte{
 	0x1e, 0xb0, 0x60, 0x30, 0x44, 0x4c, 0x49, 0x81, 0x8b, 0x07, 0x62, 0x4a, 0x71, 0x41, 0x7e, 0x5e,
 	0x71, 0x2a, 0xa6, 0x31, 0x4a, 0x96, 0x5c, 0x7c, 0xce, 0xf9, 0xb9, 0x05, 0xa5, 0x25, 0xa9, 0x30,
 	0xab, 0xd4, 0xb9, 0xf8, 0x93, 0x21, 0x22, 0x70, 0xa3, 0x19, 0xc1, 0x46, 0xf3, 0x41, 0x85, 0x61,
-	0x86, 0x2b, 0x73, 0xf1, 0xc3, 0xb5, 0xe2, 0x32, 0xdf, 0x28, 0x92, 0x8b, 0xc5, 0xbd, 0x28, 0xb3,
-	0x40, 0x48, 0x99, 0x8b, 0x05, 0xe4, 0x12, 0x21, 0x1e, 0x3d, 0x24, 0x6f, 0x49, 0xf1, 0xea, 0xa1,
-	0x38, 0x4f, 0x87, 0x8b, 0x1d, 0x6a, 0xa2, 0x10, 0xbf, 0x1e, 0xaa, 0xb3, 0xa4, 0x04, 0xf4, 0xd0,
-	0x2c, 0x4b, 0x62, 0x03, 0x87, 0x94, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x74, 0x7b, 0xab, 0x75,
-	0x3d, 0x01, 0x00, 0x00,
+	0x86, 0x2b, 0x73, 0xf1, 0xc3, 0xb5, 0xe2, 0x32, 0xdf, 0xa8, 0x83, 0x91, 0x8b, 0xc5, 0xbd, 0x28,
+	0xb3, 0x40, 0x48, 0x99, 0x8b, 0x05, 0xe4, 0x14, 0x21, 0x1e, 0x3d, 0x24, 0x7f, 0x49, 0xf1, 0xea,
+	0xa1, 0xb8, 0x4f, 0x97, 0x8b, 0x0b, 0xc4, 0x0f, 0x2e, 0x29, 0x4a, 0x4d, 0xcc, 0xc5, 0xab, 0x54,
+	0x83, 0xd1, 0x80, 0x51, 0x48, 0x87, 0x8b, 0x1d, 0xea, 0x02, 0x21, 0x7e, 0x3d, 0x54, 0x6f, 0x48,
+	0x09, 0xe8, 0xa1, 0x39, 0x2e, 0x89, 0x0d, 0x1c, 0xb2, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x8b, 0xea, 0x70, 0xf9, 0x6d, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -233,6 +234,8 @@ const _ = grpc.SupportPackageIsVersion4
 type GripClient interface {
 	// A simple echo request and response
 	Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
+	// A streaming echo interface
+	EchoStream(ctx context.Context, opts ...grpc.CallOption) (Grip_EchoStreamClient, error)
 	// An rpc representing a CPU heavy call
 	Compute(ctx context.Context, in *ComputeRequest, opts ...grpc.CallOption) (*ComputeResponse, error)
 }
@@ -254,6 +257,37 @@ func (c *gripClient) Echo(ctx context.Context, in *EchoRequest, opts ...grpc.Cal
 	return out, nil
 }
 
+func (c *gripClient) EchoStream(ctx context.Context, opts ...grpc.CallOption) (Grip_EchoStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Grip_serviceDesc.Streams[0], "/Grip/EchoStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &gripEchoStreamClient{stream}
+	return x, nil
+}
+
+type Grip_EchoStreamClient interface {
+	Send(*EchoRequest) error
+	Recv() (*EchoResponse, error)
+	grpc.ClientStream
+}
+
+type gripEchoStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *gripEchoStreamClient) Send(m *EchoRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *gripEchoStreamClient) Recv() (*EchoResponse, error) {
+	m := new(EchoResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *gripClient) Compute(ctx context.Context, in *ComputeRequest, opts ...grpc.CallOption) (*ComputeResponse, error) {
 	out := new(ComputeResponse)
 	err := c.cc.Invoke(ctx, "/Grip/Compute", in, out, opts...)
@@ -267,6 +301,8 @@ func (c *gripClient) Compute(ctx context.Context, in *ComputeRequest, opts ...gr
 type GripServer interface {
 	// A simple echo request and response
 	Echo(context.Context, *EchoRequest) (*EchoResponse, error)
+	// A streaming echo interface
+	EchoStream(Grip_EchoStreamServer) error
 	// An rpc representing a CPU heavy call
 	Compute(context.Context, *ComputeRequest) (*ComputeResponse, error)
 }
@@ -277,6 +313,9 @@ type UnimplementedGripServer struct {
 
 func (*UnimplementedGripServer) Echo(ctx context.Context, req *EchoRequest) (*EchoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
+}
+func (*UnimplementedGripServer) EchoStream(srv Grip_EchoStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method EchoStream not implemented")
 }
 func (*UnimplementedGripServer) Compute(ctx context.Context, req *ComputeRequest) (*ComputeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Compute not implemented")
@@ -302,6 +341,32 @@ func _Grip_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface
 		return srv.(GripServer).Echo(ctx, req.(*EchoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _Grip_EchoStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GripServer).EchoStream(&gripEchoStreamServer{stream})
+}
+
+type Grip_EchoStreamServer interface {
+	Send(*EchoResponse) error
+	Recv() (*EchoRequest, error)
+	grpc.ServerStream
+}
+
+type gripEchoStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *gripEchoStreamServer) Send(m *EchoResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *gripEchoStreamServer) Recv() (*EchoRequest, error) {
+	m := new(EchoRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func _Grip_Compute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -335,6 +400,13 @@ var _Grip_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Grip_Compute_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "EchoStream",
+			Handler:       _Grip_EchoStream_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "proto/grip.proto",
 }
