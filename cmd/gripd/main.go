@@ -1,8 +1,9 @@
 package main
 
 import (
-	srv "github.com/codycollier/grip-go/pkg/server"
 	"log"
+
+	srv "github.com/codycollier/grip-go/pkg/server"
 )
 
 func main() {

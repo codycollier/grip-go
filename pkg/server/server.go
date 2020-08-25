@@ -2,12 +2,13 @@ package server
 
 import (
 	"context"
-	"github.com/codycollier/grip-go/pkg/mockload"
-	pb "github.com/codycollier/grip-go/proto"
-	"google.golang.org/grpc"
 	"io"
 	"log"
 	"net"
+
+	"github.com/codycollier/grip-go/pkg/mockload"
+	pb "github.com/codycollier/grip-go/proto"
+	"google.golang.org/grpc"
 )
 
 // Core struct representing the gRPC Grip service
@@ -32,7 +33,7 @@ func (s *gripServer) EchoStream(stream pb.Grip_EchoStreamServer) error {
 
 		// End of stream
 		if err == io.EOF {
-			return nil
+			break
 		}
 
 		// Error

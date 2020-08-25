@@ -1,8 +1,9 @@
 package main
 
 import (
-	client "github.com/codycollier/grip-go/pkg/client"
 	"log"
+
+	client "github.com/codycollier/grip-go/pkg/client"
 )
 
 func main() {

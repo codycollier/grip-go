@@ -2,12 +2,13 @@ package client
 
 import (
 	"context"
-	pb "github.com/codycollier/grip-go/proto"
-	"google.golang.org/grpc"
 	"io"
 	"log"
 	"strconv"
 	"time"
+
+	pb "github.com/codycollier/grip-go/proto"
+	"google.golang.org/grpc"
 )
 
 func GetNewGripClient(addr string) (pb.GripClient, *grpc.ClientConn) {
