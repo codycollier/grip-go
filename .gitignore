@@ -1,3 +1,4 @@
 bin/
 cmd/gripd/gripd
 cmd/grip-client/grip-client
+vendor/
